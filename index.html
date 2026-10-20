@@ -482,6 +482,7 @@
     aspect-ratio: 3 / 4;
     height: auto;
     object-fit: cover;
+    object-position: center 80%;
     border-radius: 0 12px 12px 0;
   }
 
@@ -519,50 +520,33 @@
     font-size: 14px;
     color: #FFFFFF;
   }
-  .contact-form-card { width: 100%; }
-  .form-group { margin-bottom: 14px; }
-  .form-group label {
-    display: block;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 13px;
-    color: rgba(255,255,255,0.7);
-    margin-bottom: 6px;
-  }
-  .form-group input,
-  .form-group textarea {
+  .contact-cta-card {
     width: 100%;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 8px;
+    padding: 32px;
+  }
+  .contact-cta-card h3 {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
     color: #FFFFFF;
-    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .contact-cta-card p {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
-    outline: none;
-    transition: border-color 0.2s;
-    appearance: none;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 28px;
   }
-  .form-group input::placeholder,
-  .form-group textarea::placeholder { color: rgba(255,255,255,0.35); }
-  .form-group input:focus,
-  .form-group textarea:focus { border-color: #2DBD6E; }
-  .form-group textarea { resize: vertical; min-height: 100px; }
-  .form-submit {
-    width: 100%;
-    background: #2DBD6E;
-    color: #0F1E3C;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    padding: 15px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s;
+  .contact-cta-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  .form-submit:hover:not(:disabled) { background: #27a862; }
-  .form-submit:disabled { opacity: 0.75; cursor: default; }
+  .contact-cta-buttons .btn-primary,
+  .contact-cta-buttons .btn-secondary { width: 100%; text-align: center; }
 
   /* FOOTER */
   .footer { background: #111827; padding: 48px 0; }
@@ -616,7 +600,7 @@
   @media (min-width: 768px) {
     .hero h1 { font-size: 48px; }
     .section-head h2 { font-size: 38px; }
-    .about-grid { grid-template-columns: 1.1fr 0.9fr; }
+    .about-grid { grid-template-columns: 1fr 1fr; }
     .contact-grid { grid-template-columns: 1fr 1fr; }
     .feature-items { grid-template-columns: repeat(3, 1fr); }
     .footer-grid { grid-template-columns: 1.3fr 1fr 1fr; }
@@ -840,26 +824,13 @@
         </div>
       </div>
       <div class="contact-right fade-in d2">
-        <div class="contact-form-card">
-          <form id="contactForm" novalidate>
-            <div class="form-group">
-              <label for="fullName">Full name</label>
-              <input type="text" id="fullName" name="fullName" placeholder="Your full name" required autocomplete="name">
-            </div>
-            <div class="form-group">
-              <label for="email">Email address</label>
-              <input type="email" id="email" name="email" placeholder="you@company.com" required autocomplete="email">
-            </div>
-            <div class="form-group">
-              <label for="company">Company name</label>
-              <input type="text" id="company" name="company" placeholder="Your company" autocomplete="organization">
-            </div>
-            <div class="form-group">
-              <label for="message">What does your operation look like?</label>
-              <textarea id="message" name="message" rows="4" placeholder="Tell us about your operation."></textarea>
-            </div>
-            <button type="submit" class="form-submit" id="formSubmitBtn">Send message</button>
-          </form>
+        <div class="contact-cta-card">
+          <h3>Start the conversation</h3>
+          <p>Send us a short note about your operation and we will come back to you to set up a discovery call.</p>
+          <div class="contact-cta-buttons">
+            <a href="mailto:admin@mmsasolutions.co.za?subject=Enquiry%20from%20the%20MMSA%20website" class="btn-primary">Email us</a>
+            <button type="button" class="btn-secondary" id="copyEmailBtn" data-email="admin@mmsasolutions.co.za">Copy email address</button>
+          </div>
         </div>
       </div>
     </div>
@@ -934,12 +905,22 @@
     });
   });
 
-  var form = document.getElementById('contactForm');
-  var submitBtn = document.getElementById('formSubmitBtn');
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    submitBtn.textContent = 'Message sent. We will be in touch.';
-    submitBtn.disabled = true;
+  var copyBtn = document.getElementById('copyEmailBtn');
+  copyBtn.addEventListener('click', function () {
+    var email = copyBtn.getAttribute('data-email');
+    var label = copyBtn.textContent;
+    function done(text) {
+      copyBtn.textContent = text;
+      setTimeout(function () { copyBtn.textContent = label; }, 2500);
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(email).then(
+        function () { done('Copied to clipboard'); },
+        function () { done(email); }
+      );
+    } else {
+      done(email);
+    }
   });
 
 })();
